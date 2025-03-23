@@ -68,7 +68,6 @@ static mp_obj_t mp_cmath_exp(mp_obj_t z_obj) {
 static MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_exp_obj, mp_cmath_exp);
 
 // ln(z): return the natural logarithm of z, with branch cut along the negative real axis
-// TODO can take second argument, being the base
 static mp_obj_t mp_cmath_ln(mp_obj_t z_obj) {
     mp_float_t real, imag;
     mp_obj_get_complex(z_obj, &real, &imag);
@@ -76,7 +75,6 @@ static mp_obj_t mp_cmath_ln(mp_obj_t z_obj) {
 }
 static MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_ln_obj, mp_cmath_ln);
 
-#if MICROPY_PY_MATH_SPECIAL_FUNCTIONS
 // log10(z): return the base-10 logarithm of z, with branch cut along the negative real axis
 static mp_obj_t mp_cmath_log10(mp_obj_t z_obj) {
     mp_float_t real, imag;
@@ -84,7 +82,16 @@ static mp_obj_t mp_cmath_log10(mp_obj_t z_obj) {
     return mp_obj_new_complex(MICROPY_FLOAT_CONST(0.5) * MICROPY_FLOAT_C_FUN(log10)(real * real + imag * imag), MICROPY_FLOAT_CONST(0.4342944819032518) * MICROPY_FLOAT_C_FUN(atan2)(imag, real));
 }
 static MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_log10_obj, mp_cmath_log10);
-#endif
+
+// log(z, b): return the log base b of z, with branch cut along the negative real axis
+static mp_obj_t mp_cmath_log(mp_obj_t z_obj, mp_obj_t b_obj) {
+    // Use change-of-base formula
+    mp_float_t zreal, zimag, breal, bimag;
+    mp_obj_get_complex(mp_cmath_log10(z_obj), &zreal, &zimag);
+    mp_obj_get_complex(mp_cmath_log10(b_obj), &breal, &bimag);
+    return mp_obj_new_complex((zreal * breal + zimag * bimag) / (breal * breal + bimag * bimag), (zimag * breal - zreal * bimag) / (breal * breal + bimag * bimag));
+}
+static MP_DEFINE_CONST_FUN_OBJ_2(mp_cmath_log_obj, mp_cmath_log);
 
 // sqrt(z): return the square-root of z
 static mp_obj_t mp_cmath_sqrt(mp_obj_t z_obj) {
@@ -120,10 +127,9 @@ static const mp_rom_map_elem_t mp_module_cmath_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_polar), MP_ROM_PTR(&mp_cmath_polar_obj) },
     { MP_ROM_QSTR(MP_QSTR_rect), MP_ROM_PTR(&mp_cmath_rect_obj) },
     { MP_ROM_QSTR(MP_QSTR_exp), MP_ROM_PTR(&mp_cmath_exp_obj) },
-    { MP_ROM_QSTR(MP_QSTR_log), MP_ROM_PTR(&mp_cmath_ln_obj) },
-    #if MICROPY_PY_MATH_SPECIAL_FUNCTIONS
+    { MP_ROM_QSTR(MP_QSTR_ln), MP_ROM_PTR(&mp_cmath_ln_obj) },
+    { MP_ROM_QSTR(MP_QSTR_log), MP_ROM_PTR(&mp_cmath_log_obj) },
     { MP_ROM_QSTR(MP_QSTR_log10), MP_ROM_PTR(&mp_cmath_log10_obj) },
-    #endif
     { MP_ROM_QSTR(MP_QSTR_sqrt), MP_ROM_PTR(&mp_cmath_sqrt_obj) },
     // { MP_ROM_QSTR(MP_QSTR_acos), MP_ROM_PTR(&mp_cmath_acos_obj) },
     // { MP_ROM_QSTR(MP_QSTR_asin), MP_ROM_PTR(&mp_cmath_asin_obj) },
