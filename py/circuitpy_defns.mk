@@ -28,14 +28,11 @@
 # Common compile warnings.
 
 BASE_CFLAGS = \
-	-fsingle-precision-constant \
 	-fno-strict-aliasing \
-	-Wdouble-promotion \
 	-Wimplicit-fallthrough=2 \
 	-Wno-endif-labels \
 	-Wstrict-prototypes \
 	-Werror-implicit-function-declaration \
-	-Wfloat-equal \
 	-Wundef \
 	-Wshadow \
 	-Wwrite-strings \
@@ -57,6 +54,16 @@ BASE_CFLAGS = \
 #        Use these flags to debug build times and header includes.
 #        -ftime-report
 #        -H
+
+# Only if we don't build double
+ifdef INTERNAL_LIBM
+ifndef INTERNAL_LIBM_DBL
+BASE_CFLAGS += \
+	-fsingle-precision-constant \
+	-Wdouble-promotion \
+	-Wfloat-equal
+endif
+endif
 
 # Micropython's implementation of <string.h> routines is incompatible with
 # "fortify source", enabled by default on gentoo's crossdev arm-none-eabi-gcc

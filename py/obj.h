@@ -193,8 +193,10 @@ static inline bool mp_obj_is_small_int(mp_const_obj_t o) {
 #endif
 
 static inline bool mp_obj_is_float(mp_const_obj_t o) {
+#if MICROPY_FLOAT_IMPL == MICROPY_FLOAT_IMPL_FLOAT
     // Ensure that 32-bit arch can only use single precision.
     MP_STATIC_ASSERT(sizeof(mp_float_t) <= sizeof(mp_obj_t));
+#endif
 
     return (((mp_uint_t)(o)) & 3) == 2 && (((mp_uint_t)(o)) & 0xff800007) != 0x00000006;
 }

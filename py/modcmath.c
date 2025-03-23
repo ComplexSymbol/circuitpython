@@ -67,14 +67,14 @@ static mp_obj_t mp_cmath_exp(mp_obj_t z_obj) {
 }
 static MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_exp_obj, mp_cmath_exp);
 
-// log(z): return the natural logarithm of z, with branch cut along the negative real axis
+// ln(z): return the natural logarithm of z, with branch cut along the negative real axis
 // TODO can take second argument, being the base
-static mp_obj_t mp_cmath_log(mp_obj_t z_obj) {
+static mp_obj_t mp_cmath_ln(mp_obj_t z_obj) {
     mp_float_t real, imag;
     mp_obj_get_complex(z_obj, &real, &imag);
     return mp_obj_new_complex(MICROPY_FLOAT_CONST(0.5) * MICROPY_FLOAT_C_FUN(log)(real * real + imag * imag), MICROPY_FLOAT_C_FUN(atan2)(imag, real));
 }
-static MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_log_obj, mp_cmath_log);
+static MP_DEFINE_CONST_FUN_OBJ_1(mp_cmath_ln_obj, mp_cmath_ln);
 
 #if MICROPY_PY_MATH_SPECIAL_FUNCTIONS
 // log10(z): return the base-10 logarithm of z, with branch cut along the negative real axis
@@ -120,7 +120,7 @@ static const mp_rom_map_elem_t mp_module_cmath_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_polar), MP_ROM_PTR(&mp_cmath_polar_obj) },
     { MP_ROM_QSTR(MP_QSTR_rect), MP_ROM_PTR(&mp_cmath_rect_obj) },
     { MP_ROM_QSTR(MP_QSTR_exp), MP_ROM_PTR(&mp_cmath_exp_obj) },
-    { MP_ROM_QSTR(MP_QSTR_log), MP_ROM_PTR(&mp_cmath_log_obj) },
+    { MP_ROM_QSTR(MP_QSTR_log), MP_ROM_PTR(&mp_cmath_ln_obj) },
     #if MICROPY_PY_MATH_SPECIAL_FUNCTIONS
     { MP_ROM_QSTR(MP_QSTR_log10), MP_ROM_PTR(&mp_cmath_log10_obj) },
     #endif

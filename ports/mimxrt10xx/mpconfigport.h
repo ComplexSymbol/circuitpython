@@ -25,6 +25,21 @@ extern uint8_t _ld_default_stack_size;
 // are aligned to cache lines.
 #define MICROPY_BYTES_PER_GC_BLOCK              (32)
 
+// ComplexSymbol added this line (https://github.com/micropython/micropython/issues/4380) BROKEN
+#ifdef MICROPY_FLOAT_IMPL
+#undef MICROPY_FLOAT_IMPL
+#endif
+#define MICROPY_FLOAT_IMPL  (MICROPY_FLOAT_IMPL_DOUBLE)
+
+#ifdef MICROPY_OBJ_REPR
+#undef MICROPY_OBJ_REPR
+#endif
+#define MICROPY_OBJ_REPR  (MICROPY_OBJ_REPR_A)
+
+#pragma GCC diagnostic ignored "-Woverflow"
+
+// Rest is not me
+
 #include "py/circuitpy_mpconfig.h"
 
 // TODO:
